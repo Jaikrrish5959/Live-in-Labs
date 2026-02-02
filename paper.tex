@@ -1,0 +1,261 @@
+\documentclass[12pt,a4paper]{article}
+
+% -------------------- Packages --------------------
+\usepackage{times}                % Times New Roman
+\usepackage{setspace}             % Line spacing
+\usepackage{geometry}             % Page margins
+\usepackage{graphicx}             % Figures
+\usepackage{caption}              % Caption control
+\usepackage{float}                % Figure/Table placement
+\usepackage{amsmath}              % Equations
+\usepackage{array}                % Tables
+\usepackage{booktabs}             % Professional tables
+\usepackage{cite}                 % References
+\usepackage{titlesec}             % Section formatting
+\usepackage{ragged2e}             % Justified text
+
+% -------------------- Page Setup --------------------
+\geometry{margin=1in}
+
+% -------------------- Section Formatting --------------------
+\titleformat{\section}
+  {\bfseries\fontsize{12}{14}\selectfont}
+  {\thesection.}{0.5em}{}
+
+\titleformat{\subsection}
+  {\bfseries\fontsize{12}{14}\selectfont}
+  {\thesubsection}{0.5em}{}
+
+% -------------------- Caption Formatting --------------------
+\captionsetup{
+  font=small,
+  labelfont=bf
+}
+
+% -------------------- Document --------------------
+\begin{document}
+
+% -------------------- Title --------------------
+\begin{center}
+{\bfseries\fontsize{14}{16}\selectfont
+Design and Implementation of a Multi-Layered Edge AI System for Wild Animal Intrusion Detection and Deterrence in Agriculture}
+\end{center}
+
+\vspace{0.5em}
+
+\begin{center}
+\fontsize{11}{13}\selectfont
+First Author Name$^{1}$, Second Author Name$^{2}$, Third Author Name$^{3}$
+\end{center}
+
+\vspace{0.5em}
+
+\begin{center}
+\fontsize{11}{13}\selectfont
+$^{1}$Author’s Affiliation, Department, College/University/Industry, City, Country\\
+$^{2}$Author’s Affiliation, Department, College/University/Industry, City, Country\\
+$^{3}$Author’s Affiliation, Department, College/University/Industry, City, Country
+\end{center}
+
+\vspace{0.5em}
+
+\begin{center}
+\fontsize{11}{13}\selectfont
+Email: firstauthor@gmail.com, secondauthor@gmail.com, thirdauthor@gmail.com
+\end{center}
+
+\vspace{0.5em}
+
+\begin{center}
+\fontsize{11}{13}\selectfont
+ORCID ID: Author1-ID, Author2-ID, Author3-ID
+\end{center}
+
+\vspace{0.5em}
+
+\begin{center}
+\fontsize{11}{13}\selectfont
+\textbf{Corresponding Author*: Author Name}
+\end{center}
+
+% -------------------- Abstract --------------------
+\vspace{1em}
+\noindent\textbf{ABSTRACT:}
+
+\begin{spacing}{1.0}
+\fontsize{11}{13}\selectfont
+\justifying
+Wild boars (Sus scrofa) cause major crop damage in Tamil Nadu farmlands, severely harming smallholder farmers' incomes. Traditional deterrents are frequently unsustainable or ineffective. This research presents a low-power IoT-based smart perimeter surveillance system for 1-acre plots. To guarantee 100\% boundary coverage with overlapping fields of vision, it implements a dual concentric ring architecture (16 nodes: 8 inner ring 14 m with offset, 8 outer ring 23 m radius). Biasing false positives with majority-rule voting, it cascades a tri-sensor pipeline per node of interrupt-driven PIR (HC-SR502), adaptive-threshold thermal array (Melexis MLX90640), and ESP32-CAM. TensorFlow Lite Micro performs on-device real-time classification with a distilled, quantized YOLOv3-tiny model (<300 KB). It cross-verifies with LoRa P2P between neighboring nodes, and issues secure cloud alerts and mobile notifications over LoRaWAN. It implements terrain adaption (<=15 degrees slope), event-driven power control, and non-lethal deterrents. Preliminary studies demonstrate higher detection reliability compared to PIR-only systems. For managing wildlife infiltration in rural agriculture, this design provides a scalable and affordable alternative.
+\end{spacing}
+
+% -------------------- Keywords --------------------
+\vspace{0.5em}
+\noindent\textbf{KEYWORDS:}
+
+\begin{spacing}{1.0}
+\fontsize{11}{13}\selectfont
+Wild boars; IoT; Edge AI; LoRaWAN; Smart Agriculture; Intrusion Detection; Non-lethal Deterrence.
+\end{spacing}
+
+% -------------------- Introduction --------------------
+\section{Introduction}
+
+\begin{spacing}{1.0}
+\fontsize{11}{13}\selectfont
+\justifying
+Wild boars (Sus scrofa) crop raiding is the primary cause of the growing human-wildlife conflict in Tamil Nadu's agricultural sector. High-value crops like paddy, chilli and cotton are severely damaged by the species, which causes significant financial losses for small and marginal farmers. Conventional techniques, such as fence, scare devices, or lethal control, frequently fail because of habituation, high costs, maintenance problems, or environmental and legal restrictions.
+
+Autonomous, real-time intrusion detection systems appropriate for off-grid rural areas are now supported by recent developments in low-power IoT, edge AI, and LoRa/LoRaWAN. However, the majority of current systems are either power-inefficient and ill-suited to uneven rural terrain, use single-sensor detection, or primarily rely on cloud processing, which causes latency and connectivity issues.
+
+A hybrid edge-centric perimeter monitoring system for around one-acre plots is proposed in this paper. It ensures continuous coverage with overlapping 110 degrees effective fields of vision thanks to its dual-ring node arrangement, which consists of an inner ring of 8 nodes at 14 m radius (22.5 degrees offset) and an outer ring of 8 nodes at 23 m radius (45 degrees spacing). For slopes up to 15 degrees, the arrangement is IMU-calibrated and geometrically certified. Each node employs a cascaded multi-modal pipeline that includes camera capture (OV2640), adaptive thermal verification (Melexis MLX90640), and PIR motion trigger (HC-SR502) with majority-rule logic to minimize false alarms caused by external influences. A distilled, 8-bit quantized YOLOv3-tiny model (<300 KB) on TensorFlow Lite Micro is used for on-device classification, allowing for quick and low-power wild boar detection.
+
+Neighbor nodes cross-verify loosely in spatiotemporal domain by short-range LoRa P2P mesh, while LoRaWAN Class A uplinks transmit secure alarms, fixed coordinates and logs to cloud backend who, in turn, expose farmer notifications via mobile app.
+\end{spacing}
+
+% -------------------- Methods and Methodology --------------------
+\section{Methods and Methodology}
+
+\begin{spacing}{1.0}
+\fontsize{11}{13}\selectfont
+\justifying
+
+\subsection{Smart Perimeter Sensing Layer}
+The primary physical barrier encircling the agricultural area is provided by the Smart Perimeter Sensing Layer, which is the key part of the suggested animal incursion detection system. By providing continuous coverage, this layer is meant to reduce blind spots and false warnings in real-world rural scenarios. A concentric ring topology is chosen to provide unobstructed coverage of a square area of around one acre. Eight sensor nodes spaced at a radius of 23 m and an angular distance of 45 degrees make up the outer ring, while eight sensor nodes spaced at a radius of 14 m and an angle distance of 22.5 degrees make up the inner ring. This pattern improves overlap between neighboring sensor nodes and minimizes coverage gaps.
+
+A tri-modal cascaded verification sensor system is installed on every node. As a low-power wake-up trigger, the first stage makes use of a Passive Infrared (PIR) sensor (HC-SR502) in interrupt mode with a 0.5 m/s detection threshold. The second stage includes a Melexis MLX90640 thermal camera with 32x24 pixel resolution and adaptive thresholding to minimize the influence of seasonal and ambient temperature changes. Only after confirmation from the first two sensors does the third stage use an ESP32-CAM module with an OV2640 camera to take pictures with a resolution of 640 x 480.
+
+A majority-rule voting system that necessitates consent from a minimum of two sensors supports the implementation of a cascaded motion detection and thermal-validated sensing pipeline. This method greatly lowers false alerts brought on by small animals, wind, and vegetation motion.
+
+\subsection{Edge AI Classification and Intelligent Multi-Node Verification}
+The Edge AI layer performs real-time intrusion classification directly on field-deployed nodes. By executing inference locally, the system achieves low response latency, reduced communication overhead, and reliable operation in agricultural environments with intermittent connectivity.
+
+\subsubsection{Event-Driven Sensor Fusion}
+An event-driven sensing strategy is adopted to minimize power consumption. A PIR sensor (HC-SR502) provides the initial motion trigger, followed by thermal verification (Melexis MLX90640) to confirm the presence of a warm-blooded object. Image acquisition is triggered only when specific conditions are met, significantly reducing false triggers and unnecessary image capture.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{data/detection_comparison.png}
+\caption{Detection Comparison Comparison}
+\end{figure}
+
+\subsubsection{Edge AI Model Deployment}
+The model is trained offline on annotated agricultural datasets and is quantized to 8-bit integer before being deployed to the edge. Quantization reduces memory usage and inference latency without significantly impacting the confidence of the classification. The model is deployed on the ESP32-CAM and performs inference in real time using TensorFlow Lite Micro.
+
+The neural network outputs class probabilities. For a multi-class case, the detection decision is based on the maximum confidence value. If the confidence is high (>0.80), an alert is triggered immediately.
+
+\subsubsection{Node-to-Node Networking and Cross-Verification}
+Neighbouring nodes cooperate to cross-verify detections using short-range sub-GHz LoRa communication (868/915 MHz). Lightweight peer-to-peer mode allows local verification and operation without requiring a gateway. If a detection occurs with intermediate confidence (0.70 <= C < 0.80), a concise verification request is broadcast to neighbours. Neighbours query their recent PIR and thermal activity within a temporal window (e.g. 3s) and return correlated triggers. If a neighbour correlates the detection, the event is considered an intrusion.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{data/p2p_overhead.png}
+\caption{P2P Communication Overhead Analysis}
+\end{figure}
+
+\subsection{Non-Lethal Response \& Deterrence}
+After Layer 2 provides high-confidence incursion confirmation (>=0.80 confidence score post-cross-verification), this layer implements localized, humane deterrence. It minimizes power consumption and habituation risk while using tiered, event-driven actuation to shock and deter wild boars without causing harm. The ESP32-CAM has GPIO-controlled activation that uses adaptive patterns and brief bursts.
+
+\subsubsection{Tiered Deterrence Model}
+\begin{itemize}
+    \item Level 1 (<200 ms): IR floodlight (850 nm, 3-5 W) + siren (100-110 dB, 1-3 s).
+    \item Level 2 (re-detection <60 s): Ultrasonic (25-35 kHz swept) + strobe (5-10 Hz).
+    \item Level 3: LoRaWAN alerts for manual intervention.
+\end{itemize}
+
+\subsubsection{Hardware \& Power Budget}
+The MOSFET-switched infrared floodlight uses 120-200 mA for a maximum of 10 seconds. The siren uses brief bursts of peak currents between 50 and 100 mA. The system stays well below the bounds needed for dependable solar operation.
+
+\subsubsection{Habituation Mitigation}
+To lessen behavioral adaption, randomized activation patterns, frequency sweeps, and LoRa-synchronized bursts across two to four nodes are employed. Field evidence reveals that combined light and sound accomplish 60-85\% short-term repulsion.
+\end{spacing}
+
+% -------------------- Results --------------------
+\section{Results and Cost Analysis}
+
+\begin{spacing}{1.0}
+\fontsize{11}{13}\selectfont
+\justifying
+This section presents the findings of the study and the economic feasibility analysis.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{data/latency_cdf.png}
+\caption{System Latency CDF}
+\end{figure}
+
+\subsection{Cost Analysis}
+The breakdown of costs for a typical 1-acre deployment (16 nodes) is as follows:
+
+\textbf{1) Cost Per Sensor Node (Layer 1 + Layer 2 combined)}
+\begin{table}[H]
+\centering
+\caption{Cost Per Sensor Node}
+\fontsize{10}{12}\selectfont
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Component} & \textbf{Approx Cost (INR)} \\ \hline
+ESP32-CAM (OV2640) & 549 \\ \hline
+HC-SR502 PIR & 61 \\ \hline
+MLX90640 Thermal Array & 5,500 \\ \hline
+LoRa SX1276 (RA-02) & 350 \\ \hline
+18650 Batteries (2600-3000 mAh) x2 & 500 \\ \hline
+TP4056 + protection + wiring & 120 \\ \hline
+IP65 enclosure + glands & 280 \\ \hline
+PCB / connectors / mounts & 200 \\ \hline
+Pole / mounting hardware & 150 \\ \hline
+\textbf{Total per Node} & \textbf{7,710} \\ \hline
+\end{tabular}
+\end{table}
+
+Total for 16 nodes = 1,23,360 INR.
+
+\textbf{2) LoRaWAN Gateway + Internet Backhaul}
+Total Gateway setup is approximately 11,448 INR, including an 8-channel Gateway, antenna, 4G router, and solar setup.
+
+\textbf{3) Cloud + Backend (AWS) Cost}
+Estimated at 1,600 INR/month (19,200 INR/year) covering AWS IoT Core, Lambda, and S3.
+
+\textbf{4) Mobile App \& Deployment}
+One-time setup cost is approximately 29,000 INR (App development, field installation, calibration).
+
+\textbf{5) Total First-Year Cost}
+\begin{itemize}
+    \item 16 Sensor Nodes: 1,23,360 INR
+    \item Gateway setup: 11,448 INR
+    \item App + Installation: 29,000 INR
+    \item Cloud (1 year): 19,200 INR
+    \item \textbf{Grand Total (Year 1): Approx 1,83,008 INR}
+\end{itemize}
+
+\textbf{6) Recurring Costs (Year 2 Onwards)}
+Approximately 27,200 INR per year for cloud services and maintenance.
+\end{spacing}
+
+% -------------------- Conclusion --------------------
+\section{Conclusion}
+
+\begin{spacing}{1.0}
+\fontsize{11}{13}\selectfont
+\justifying
+Wild boars cause significant damage to agriculture, and traditional solutions often fail due to habituation or high costs. This paper proposed a multi-layered Edge AI system utilizing a dual-ring sensor topology, multi-modal sensor fusion (PIR, Thermal, Camera), and on-device quantization models (YOLOv3-tiny) to detect intrusions with high accuracy and low power consumption. By integrating reliable LoRaWAN communication for alerts and a tiered non-lethal deterrence mechanism, the system offers a sustainable, humane, and cost-effective solution for smallholder farmers. The cost analysis confirms the economic viability of the system for 1-acre plots, providing a scalable model for rural wildlife conflict mitigation.
+\end{spacing}
+
+% -------------------- Acknowledgement --------------------
+\section*{Acknowledgement}
+
+\fontsize{11}{13}\selectfont
+We thank the support staff and funding agencies for their contributions to this work.
+
+% -------------------- References --------------------
+\begin{thebibliography}{99}
+
+\fontsize{11}{13}\selectfont
+
+\bibitem{ref1}
+Jiang WG, Sanders AJ, Katoh M, et al.
+\textit{Tissue invasion and metastasis: Molecular, biological and clinical perspectives}.
+Seminars in Cancer Biology, 2015; 35: S244--S275.
+
+\end{thebibliography}
+
+\end{document}

@@ -24,3 +24,8 @@ Thumbs.db
 
 # Logs
 *.log
+
+# NS-3 Build Artifacts
+ns-allinone-3.40/
+*.tar.bz2
+*.tar.bz2.*
