@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge AI Simulation Visualizer</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- External Libraries (CDN for minimalism) -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>Farm Intrusion Simulation Replay</h1>
+            <div class="controls">
+                <button id="playBtn">Play</button>
+                <button id="pauseBtn">Pause</button>
+                <button id="resetBtn">Reset</button>
+                <span id="timeDisplay">Time: 0.0s</span>
+            </div>
+        </header>
+
+        <!-- Main Grid -->
+        <div class="grid">
+            
+            <!-- Left: Topology Map -->
+            <div class="card map-card">
+                <h2>Live Topology (Dual-Ring)</h2>
+                <div id="vis-container"></div>
+                <div class="legend">
+                    <span><span class="dot idle"></span> Idle</span>
+                    <span><span class="dot pir"></span> PIR</span>
+                    <span><span class="dot thermal"></span> Thermal</span>
+                    <span><span class="dot camera"></span> Cam/Vote</span>
+                    <span><span class="dot alert"></span> Alert</span>
+                </div>
+            </div>
+
+            <!-- Right: Metrics -->
+            <div class="metrics-column">
+                <div class="card">
+                    <h2>Battery Drain (%)</h2>
+                    <canvas id="batteryChart"></canvas>
+                </div>
+                <div class="card">
+                    <h2>Latency Stats</h2>
+                    <div id="latencyStats">
+                        <p>Latest Latency: <span id="lat-val">--</span> s</p>
+                        <p>Detections: <span id="detect-count">0</span></p>
+                    </div>
+                </div>
+                <div class="card log-card">
+                    <h2>Event Log</h2>
+                    <ul id="eventList"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic -->
+    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/visualizer.js') }}"></script>
+</body>
+</html>

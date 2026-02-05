@@ -1,0 +1,86 @@
+PAPER ANALYSIS REPORT
+=====================
+
+FILE CLASSIFICATION
+-------------------
+Filename: paper.tex
+Type: LaTeX Source Document
+Content: Research Paper Draft
+Subject: Smart Agriculture / Edge AI System for Wildlife Intrusion Detection
+
+1. EXECUTIVE SUMMARY
+-------------------
+This file contains the source code and content for a research paper titled:
+"Design and Implementation of a Multi-Layered Edge AI System for Wild Animal Intrusion Detection and Deterrence in Agriculture"
+
+The paper proposes a low-cost, IoT-based perimeter surveillance system designed specifically for protecting 1-acre farmlands in Tamil Nadu from wild boar attacks. It details a system using 16 interconnected sensor nodes that combine motion detection, thermal imaging, and AI computer vision to detect animals and deter them using non-lethal methods (lights and sounds).
+
+2. TECHNICAL SYSTEM ARCHITECTURE (AS DESCRIBED IN THE TEXT)
+----------------------------------------------------------
+The research describes a highly specific engineering solution:
+
+A. Topology
+   - Dual Concentric Rings: An inner ring (14m radius) and outer ring (23m radius).
+   - Node Count: 16 nodes total (8 inner, 8 outer).
+   - Coverage: Overlapping fields of view to minimize blind spots.
+
+B. Hardware Stack (Per Node)
+   - Microcontroller: ESP32-CAM.
+   - Sensors: 
+     1. HC-SR502 PIR (Motion trigger, wake-up).
+     2. Melexis MLX90640 (Thermal array for heat verification).
+     3. OV2640 Camera (Visual confirmation).
+   - Power: Solar + 18650 Li-ion batteries.
+
+C. AI & Software
+   - Model: Quantized YOLOv3-tiny (<300 KB).
+   - Framework: TensorFlow Lite Micro.
+   - Function: On-device classification of wild boars vs. other movements.
+   - Logic: "Majority-rule voting" (requires agreement from 2+ sensors).
+
+D. Telecommunications
+   - Local: LoRa P2P (Peer-to-Peer) for node-to-node cross-verification.
+   - Uplink: LoRaWAN Class A for sending alerts to the cloud.
+
+E. Deterrence (Response)
+   - Level 1: IR Floodlight + Siren.
+   - Level 2: Ultrasonic sweeping + Strobe lights.
+   - Level 3: Alert to human via mobile app.
+
+3. LATEX DOCUMENT STRUCTURE ANALYSIS
+-----------------------------------
+The file is a standard article-class LaTeX document designed for academic submission.
+
+A. Formatting
+   - Class: \documentclass[12pt,a4paper]{article}
+   - Packages: Uses standard academic packages including 'times' (font), 'geometry' (margins), 'graphicx' (images), and 'cite' (references).
+   - Customization: Defines custom headers for Section and Subsection titles using \titleformat.
+
+B. Key Sections Defined
+   - Abstract & Keywords
+   - Introduction: Problem statement regarding human-wildlife conflict.
+   - Methods and Methodology: Details the sensing layer, edge AI, and networking.
+   - Results and Cost Analysis: Contains placeholders for graphs and a detailed cost table.
+   - Conclusion & Acknowledgement.
+   - References: Currently contains a dummy/placeholder reference (to a cancer biology paper) which needs to be replaced.
+
+4. DEPENDENCIES & MISSING ELEMENTS
+---------------------------------
+To compile this file successfully, the following external files are required in a 'data/' subdirectory:
+   - data/detection_comparison.png
+   - data/p2p_overhead.png
+   - data/latency_cdf.png
+
+5. COST ESTIMATION HIGHLIGHTS
+----------------------------
+The paper includes a specific economic analysis:
+- Cost per node: ~7,710 INR
+- Total setup implementation (Year 1): ~1,83,008 INR
+- Recurring cost: ~27,200 INR/year
+
+6. ACTION ITEMS FOR COMPLETION
+-----------------------------
+To finalize this paper, the following placeholders need attention:
+- Author Details: Currently "First Author Name", "Author's Affiliation".
+- References: The bibliography contains a placeholder item about "Tissue invasion and metastasis" which is irrelevant to agriculture/IoT.
+- Images: Ensure the referenced PNG files exist in the 'data' folder.

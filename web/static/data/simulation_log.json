@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "farm_size_acres": 1.0,
+    "simulation_duration": 60,
+    "nodes": {
+      "outer_0": {"ring": "outer", "angle": 0, "id": "outer_0"},
+      "outer_1": {"ring": "outer", "angle": 45, "id": "outer_1"},
+      "outer_2": {"ring": "outer", "angle": 90, "id": "outer_2"},
+      "outer_3": {"ring": "outer", "angle": 135, "id": "outer_3"},
+      "outer_4": {"ring": "outer", "angle": 180, "id": "outer_4"},
+      "outer_5": {"ring": "outer", "angle": 225, "id": "outer_5"},
+      "outer_6": {"ring": "outer", "angle": 270, "id": "outer_6"},
+      "outer_7": {"ring": "outer", "angle": 315, "id": "outer_7"},
+      "inner_0": {"ring": "inner", "angle": 22.5, "id": "inner_0"},
+      "inner_1": {"ring": "inner", "angle": 67.5, "id": "inner_1"},
+      "inner_2": {"ring": "inner", "angle": 112.5, "id": "inner_2"},
+      "inner_3": {"ring": "inner", "angle": 157.5, "id": "inner_3"},
+      "inner_4": {"ring": "inner", "angle": 202.5, "id": "inner_4"},
+      "inner_5": {"ring": "inner", "angle": 247.5, "id": "inner_5"},
+      "inner_6": {"ring": "inner", "angle": 292.5, "id": "inner_6"},
+      "inner_7": {"ring": "inner", "angle": 337.5, "id": "inner_7"}
+    }
+  },
+  "events": [
+    {"time": 2.0, "type": "PIR_TRIGGER", "node_id": "outer_0", "state": "PIR_ACTIVE"},
+    {"time": 2.2, "type": "THERMAL_CHECK", "node_id": "outer_0", "state": "THERMAL_ACTIVE"},
+    {"time": 2.4, "type": "CAMERA_CAPTURE", "node_id": "outer_0", "state": "CAMERA_PROCESSING"},
+    {"time": 2.8, "type": "VOTE_REQUEST", "source_node": "outer_0", "target_nodes": ["outer_1", "inner_0", "outer_7"]},
+    {"time": 3.0, "type": "VOTE_RESPONSE", "source_node": "inner_0", "target_node": "outer_0", "vote": "CONFIRM"},
+    {"time": 3.1, "type": "VOTE_RESPONSE", "source_node": "outer_1", "target_node": "outer_0", "vote": "CONFIRM"},
+    {"time": 3.2, "type": "ALERT_TRIGGER", "node_id": "outer_0", "level": "LEVEL_1", "description": "Intruder Confirmed (3 votes)"},
+    {"time": 3.5, "type": "STATE_RESET", "node_id": "outer_0", "state": "IDLE"},
+    
+    {"time": 10.0, "type": "PIR_TRIGGER", "node_id": "inner_4", "state": "PIR_ACTIVE"},
+    {"time": 10.2, "type": "THERMAL_CHECK", "node_id": "inner_4", "state": "THERMAL_ACTIVE"},
+    {"time": 10.5, "type": "VOTE_REQUEST", "source_node": "inner_4", "target_nodes": ["inner_5", "outer_5"]},
+    {"time": 11.0, "type": "VOTE_RESPONSE", "source_node": "outer_5", "target_node": "inner_4", "vote": "DENY"},
+    {"time": 11.2, "type": "STATE_RESET", "node_id": "inner_4", "state": "IDLE", "reason": "False Positive Filtered"}
+  ],
+  "metrics": {
+    "battery": {
+      "outer_0": [100, 99.98, 99.95, 99.90, 99.88],
+      "inner_0": [100, 99.99, 99.98, 99.97, 99.96],
+      "outer_1": [100, 100, 99.99, 99.98, 99.97],
+      "inner_4": [100, 99.95, 99.90, 99.85, 99.85]
+    },
+    "latency": [
+        {"time": 3.2, "latency": 1.2, "node": "outer_0"}
+    ]
+  }
+}
