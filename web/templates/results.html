@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .results-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .nav-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .nav-bar a {
+            color: #3498db;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .nav-bar a:hover,
+        .nav-bar a.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            border-left: 4px solid #3498db;
+        }
+
+        .metric-card.success {
+            border-left-color: #2ecc71;
+        }
+
+        .metric-card.danger {
+            border-left-color: #e74c3c;
+        }
+
+        .metric-card.warning {
+            border-left-color: #f39c12;
+        }
+
+        .metric-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+            margin: 0.5rem 0;
+        }
+
+        .metric-label {
+            color: #888;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .chart-card h3 {
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #0f3460, #16213e);
+            border-radius: 12px;
+            padding: 2rem;
+            border-left: 4px solid #8e44ad;
+        }
+
+        .summary-card h3 {
+            color: #8e44ad;
+            margin-bottom: 1rem;
+        }
+
+        .summary-text {
+            color: #ccc;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="results-container">
+        <nav class="nav-bar">
+            <a href="/">🎮 Interactive Simulator</a>
+            <a href="/results" class="active">📊 Results</a>
+        </nav>
+
+        <h1>Simulation Results</h1>
+        <button class="refresh-btn" onclick="refreshStats()">🔄 Refresh Stats</button>
+
+        <!-- Key Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card success">
+                <div class="metric-label">Detection Rate</div>
+                <div class="metric-value" id="detectionRate">--</div>
+            </div>
+            <div class="metric-card danger">
+                <div class="metric-label">False Positive Rate</div>
+                <div class="metric-value" id="fpRate">--</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Boar Injections</div>
+                <div class="metric-value" id="boarInjections">0</div>
+            </div>
+            <div class="metric-card warning">
+                <div class="metric-label">Detected Boars</div>
+                <div class="metric-value" id="detectedBoars">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Noise Injections</div>
+                <div class="metric-value" id="noiseInjections">0</div>
+            </div>
+            <div class="metric-card danger">
+                <div class="metric-label">False Alerts</div>
+                <div class="metric-value" id="falseAlerts">0</div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-row">
+            <div class="chart-card">
+                <h3>Detection Performance</h3>
+                <canvas id="performanceChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Event Breakdown</h3>
+                <canvas id="eventsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary-card">
+            <h3>Analysis Summary</h3>
+            <p class="summary-text" id="summaryText">
+                Click "Refresh Stats" or interact with the simulator to see analysis.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let performanceChart, eventsChart;
+
+        // Initialize Charts
+        function initCharts() {
+            const perfCtx = document.getElementById('performanceChart').getContext('2d');
+            performanceChart = new Chart(perfCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Detection Rate', 'False Positive Rate'],
+                    datasets: [{
+                        label: 'Rate (%)',
+                        data: [0, 0],
+                        backgroundColor: ['#2ecc71', '#e74c3c']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true, max: 100 } }
+                }
+            });
+
+            const eventsCtx = document.getElementById('eventsChart').getContext('2d');
+            eventsChart = new Chart(eventsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Detected Boars', 'Missed Boars', 'False Alerts', 'Correct Rejections'],
+                    datasets: [{
+                        data: [0, 0, 0, 0],
+                        backgroundColor: ['#2ecc71', '#95a5a6', '#e74c3c', '#3498db']
+                    }]
+                },
+                options: { responsive: true }
+            });
+        }
+
+        async function refreshStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+
+                // Update metrics
+                document.getElementById('detectionRate').textContent = data.detection_rate + '%';
+                document.getElementById('fpRate').textContent = data.false_positive_rate + '%';
+                document.getElementById('boarInjections').textContent = data.boar_injections;
+                document.getElementById('detectedBoars').textContent = data.detected_boars;
+                document.getElementById('noiseInjections').textContent = data.noise_injections;
+                document.getElementById('falseAlerts').textContent = data.false_alerts;
+
+                // Update charts
+                performanceChart.data.datasets[0].data = [data.detection_rate, data.false_positive_rate];
+                performanceChart.update();
+
+                const missedBoars = data.boar_injections - data.detected_boars;
+                const correctRejections = data.noise_injections - data.false_alerts;
+                eventsChart.data.datasets[0].data = [data.detected_boars, missedBoars, data.false_alerts, correctRejections];
+                eventsChart.update();
+
+                // Update summary
+                updateSummary(data);
+            } catch (err) {
+                console.error('Failed to fetch stats:', err);
+            }
+        }
+
+        function updateSummary(data) {
+            const total = data.boar_injections + data.noise_injections;
+            if (total === 0) {
+                document.getElementById('summaryText').textContent =
+                    "No events have been injected yet. Go to the Interactive Simulator and click on sensors to inject events.";
+                return;
+            }
+
+            let summary = `After ${total} injected events (${data.boar_injections} boar, ${data.noise_injections} noise): `;
+
+            if (data.detection_rate >= 90) {
+                summary += `Excellent detection performance with ${data.detection_rate}% detection rate. `;
+            } else if (data.detection_rate >= 70) {
+                summary += `Good detection rate of ${data.detection_rate}%. `;
+            } else {
+                summary += `Detection rate of ${data.detection_rate}% needs improvement. `;
+            }
+
+            if (data.false_positive_rate <= 10) {
+                summary += `False positive rate is well-controlled at ${data.false_positive_rate}%.`;
+            } else if (data.false_positive_rate <= 30) {
+                summary += `False positive rate of ${data.false_positive_rate}% is acceptable.`;
+            } else {
+                summary += `High false positive rate of ${data.false_positive_rate}% requires attention.`;
+            }
+
+            document.getElementById('summaryText').textContent = summary;
+        }
+
+        // Init
+        initCharts();
+        refreshStats();
+
+        // Auto-refresh every 5 seconds
+        setInterval(refreshStats, 5000);
+    </script>
+</body>
+
+</html>

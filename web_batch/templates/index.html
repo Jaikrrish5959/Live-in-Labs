@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wildlife Intrusion Detection Simulator</title>
+    <meta name="description" content="Edge-AI based wildlife intrusion detection simulation for agricultural perimeter security">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🦌</span>
+                    <h1>Wildlife Intrusion Simulator</h1>
+                </div>
+                <span class="badge">Research Prototype</span>
+            </div>
+            <p class="subtitle">Edge-AI based cascaded detection system for agricultural perimeter security</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Configuration Panel -->
+            <section class="panel config-panel">
+                <h2 class="panel-title">
+                    <span class="icon">⚙️</span>
+                    Simulation Parameters
+                </h2>
+                
+                <form id="simulationForm">
+                    <!-- Simulation Settings -->
+                    <div class="form-section">
+                        <h3>Simulation</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="eventCount">Event Count</label>
+                                <input type="number" id="eventCount" name="eventCount" value="500" min="10" max="10000">
+                                <span class="hint">Number of sensor events to simulate</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="randomSeed">Random Seed</label>
+                                <input type="number" id="randomSeed" name="randomSeed" value="42">
+                                <span class="hint">For reproducibility</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="intruderProb">Intruder Probability</label>
+                                <input type="number" id="intruderProb" name="intruderProb" value="0.30" min="0" max="1" step="0.05">
+                                <span class="hint">Fraction of events that are real intrusions</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topology Settings -->
+                    <div class="form-section">
+                        <h3>Topology</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="outerNodes">Outer Ring Nodes</label>
+                                <input type="number" id="outerNodes" name="outerNodes" value="8" min="4" max="32">
+                            </div>
+                            <div class="form-group">
+                                <label for="innerNodes">Inner Ring Nodes</label>
+                                <input type="number" id="innerNodes" name="innerNodes" value="8" min="4" max="32">
+                            </div>
+                            <div class="form-group">
+                                <label for="sensorRange">Sensor Range (m)</label>
+                                <input type="number" id="sensorRange" name="sensorRange" value="15" min="5" max="50">
+                            </div>
+                            <div class="form-group">
+                                <label for="p2pRange">P2P Range (m)</label>
+                                <input type="number" id="p2pRange" name="p2pRange" value="30" min="10" max="100">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Decision Logic -->
+                    <div class="form-section">
+                        <h3>Decision Logic</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="confirmThreshold">Confirm Threshold</label>
+                                <input type="number" id="confirmThreshold" name="confirmThreshold" value="0.80" min="0.5" max="1" step="0.05">
+                                <span class="hint">AI confidence for immediate alert</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="verifyThreshold">Verify Threshold</label>
+                                <input type="number" id="verifyThreshold" name="verifyThreshold" value="0.70" min="0.3" max="1" step="0.05">
+                                <span class="hint">Threshold for P2P verification</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="verifyTimeout">Verify Timeout (s)</label>
+                                <input type="number" id="verifyTimeout" name="verifyTimeout" value="3.0" min="0.5" max="10" step="0.5">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Settings (Collapsible) -->
+                    <details class="form-section advanced">
+                        <summary><h3>Advanced Settings</h3></summary>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="boarConfMean">Boar Confidence Mean</label>
+                                <input type="number" id="boarConfMean" name="boarConfMean" value="0.85" min="0.5" max="1" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="noiseConfMean">Noise Confidence Mean</label>
+                                <input type="number" id="noiseConfMean" name="noiseConfMean" value="0.35" min="0" max="0.7" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="lossBase">Base Packet Loss</label>
+                                <input type="number" id="lossBase" name="lossBase" value="0.0" min="0" max="0.5" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="gwUpMean">Gateway Up Duration (s)</label>
+                                <input type="number" id="gwUpMean" name="gwUpMean" value="1800" min="60" max="7200">
+                            </div>
+                        </div>
+                    </details>
+
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <span class="btn-icon">▶</span>
+                        Run Simulation
+                    </button>
+                </form>
+            </section>
+
+            <!-- Results Panel -->
+            <section class="panel results-panel" id="resultsPanel">
+                <h2 class="panel-title">
+                    <span class="icon">📊</span>
+                    Results
+                </h2>
+
+                <!-- Status Display -->
+                <div class="status-area" id="statusArea">
+                    <div class="status-idle">
+                        <span class="status-icon">⏳</span>
+                        <p>Submit a simulation to see results</p>
+                    </div>
+                </div>
+
+                <!-- Results Content (hidden until complete) -->
+                <div class="results-content hidden" id="resultsContent">
+                    <!-- Metrics Cards -->
+                    <div class="metrics-grid">
+                        <div class="metric-card detection">
+                            <span class="metric-label">Detection Rate</span>
+                            <span class="metric-value" id="detectionRate">--</span>
+                        </div>
+                        <div class="metric-card fpr">
+                            <span class="metric-label">False Positive Rate</span>
+                            <span class="metric-value" id="fprValue">--</span>
+                        </div>
+                        <div class="metric-card latency">
+                            <span class="metric-label">Mean Latency</span>
+                            <span class="metric-value" id="latencyValue">--</span>
+                        </div>
+                        <div class="metric-card p2p">
+                            <span class="metric-label">P2P Messages</span>
+                            <span class="metric-value" id="p2pMessages">--</span>
+                        </div>
+                    </div>
+
+                    <!-- Plots -->
+                    <div class="plots-section">
+                        <h3>Visualization</h3>
+                        <div class="plots-grid">
+                            <div class="plot-card">
+                                <img id="latencyPlot" alt="Latency CDF" class="plot-img">
+                                <span class="plot-label">Latency Distribution</span>
+                            </div>
+                            <div class="plot-card">
+                                <img id="comparisonPlot" alt="Detection Comparison" class="plot-img">
+                                <span class="plot-label">Performance Comparison</span>
+                            </div>
+                            <div class="plot-card">
+                                <img id="p2pPlot" alt="P2P Overhead" class="plot-img">
+                                <span class="plot-label">P2P Overhead</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="summary-section">
+                        <h3>Summary</h3>
+                        <p id="conclusionText" class="conclusion"></p>
+                    </div>
+
+                    <!-- Downloads -->
+                    <div class="downloads-section">
+                        <h3>Download Artifacts</h3>
+                        <div class="download-buttons">
+                            <a id="downloadMetrics" class="btn btn-secondary" download>
+                                📄 metrics.json
+                            </a>
+                            <a id="downloadSummary" class="btn btn-secondary" download>
+                                📋 summary.json
+                            </a>
+                            <a id="downloadInput" class="btn btn-secondary" download>
+                                ⚙️ input.json
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Wildlife Intrusion Detection Simulation • Research Prototype • Sensor-Level Only (No RF Simulation)</p>
+        </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

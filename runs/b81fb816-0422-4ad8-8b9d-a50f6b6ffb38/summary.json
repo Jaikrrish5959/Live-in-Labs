@@ -1,0 +1,35 @@
+{
+  "run_id": "b81fb816-0422-4ad8-8b9d-a50f6b6ffb38",
+  "status": "completed",
+  "event_summary": {
+    "total_events": 500,
+    "intruder_events": 163,
+    "noise_events": 337
+  },
+  "detection_performance": {
+    "detection_rate": "97.55%",
+    "false_positive_rate": "0.59%",
+    "true_positives": 159,
+    "false_positives": 2
+  },
+  "latency_performance": {
+    "mean_latency": "0.023s",
+    "max_latency": "0.438s",
+    "p95_latency": "0.323s"
+  },
+  "communication_overhead": {
+    "total_p2p_messages": 10,
+    "mean_p2p_per_event": "1.00"
+  },
+  "gateway_reliability": {
+    "detections_during_outage": 3,
+    "outage_rate": "1.86%"
+  },
+  "comparison_to_baseline": {
+    "baseline_detection_rate": "100.00%",
+    "baseline_fpr": "16.32%",
+    "fpr_reduction": "15.73%",
+    "detection_rate_change": "-2.45%"
+  },
+  "conclusion": "The cascaded detection system achieved excellent performance with 97.5% detection rate and 0.6% false positive rate. Compared to the PIR-only baseline, false positives were reduced by 96%."
+}

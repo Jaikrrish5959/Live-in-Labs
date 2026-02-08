@@ -1,69 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edge AI Simulation Visualizer</title>
-    
-    <!-- CSS -->
+    <title>Edge AI Interactive Simulator</title>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    
-    <!-- External Libraries (CDN for minimalism) -->
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
     <div class="container">
         <!-- Header -->
         <header>
-            <h1>Farm Intrusion Simulation Replay</h1>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h1>Interactive Intrusion Simulator</h1>
+                <nav style="display: flex; gap: 1rem;">
+                    <a href="/"
+                        style="color: #3498db; background: rgba(52,152,219,0.2); padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none;">🎮
+                        Simulator</a>
+                    <a href="/results"
+                        style="color: #8e44ad; background: rgba(142,68,173,0.2); padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none;">📊
+                        Results</a>
+                </nav>
+            </div>
             <div class="controls">
-                <button id="playBtn">Play</button>
-                <button id="pauseBtn">Pause</button>
-                <button id="resetBtn">Reset</button>
-                <span id="timeDisplay">Time: 0.0s</span>
+                <label>Injection Mode:</label>
+                <select id="injectionType">
+                    <option value="boar">Wild Boar (True Positive)</option>
+                    <option value="false_alarm">Wind/Noise (False Alarm)</option>
+                </select>
+                <span id="connectionStatus" style="color:red; margin-left: 15px;">🔴 Disconnected</span>
             </div>
         </header>
 
         <!-- Main Grid -->
         <div class="grid">
-            
+
             <!-- Left: Topology Map -->
             <div class="card map-card">
-                <h2>Live Topology (Dual-Ring)</h2>
+                <h2>Field Map (Click to Inject)</h2>
                 <div id="vis-container"></div>
-                <div class="legend">
-                    <span><span class="dot idle"></span> Idle</span>
-                    <span><span class="dot pir"></span> PIR</span>
-                    <span><span class="dot thermal"></span> Thermal</span>
-                    <span><span class="dot camera"></span> Cam/Vote</span>
-                    <span><span class="dot alert"></span> Alert</span>
+
+                <div class="system-status">
+                    <div>System Alert: <span id="alertLevel" class="badge">NONE</span></div>
                 </div>
             </div>
 
             <!-- Right: Metrics -->
             <div class="metrics-column">
                 <div class="card">
-                    <h2>Battery Drain (%)</h2>
-                    <canvas id="batteryChart"></canvas>
-                </div>
-                <div class="card">
-                    <h2>Latency Stats</h2>
-                    <div id="latencyStats">
-                        <p>Latest Latency: <span id="lat-val">--</span> s</p>
-                        <p>Detections: <span id="detect-count">0</span></p>
+                    <h2>System Performance Stats (Rate %)</h2>
+                    <div style="height: 200px;">
+                        <canvas id="liveChart"></canvas>
                     </div>
                 </div>
+
                 <div class="card log-card">
-                    <h2>Event Log</h2>
+                    <h2>Live Event Log</h2>
                     <ul id="eventList"></ul>
+                </div>
+
+                <div class="card">
+                    <h3>Instructions</h3>
+                    <p style="font-size: 0.9em;">
+                        1. Select injection type (Boar/Noise).<br />
+                        2. Click anywhere on the rings.<br />
+                        3. Watch the sensor fusion logic unfold.<br />
+                        <span style="color:#e67e22">Orange</span> = Thermal, <span style="color:#8e44ad">Purple</span> =
+                        Voting.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Logic -->
-    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/visualizer.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
+
 </html>

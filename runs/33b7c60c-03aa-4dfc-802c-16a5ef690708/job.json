@@ -1,0 +1,43 @@
+{
+  "job_id": "33b7c60c-03aa-4dfc-802c-16a5ef690708",
+  "status": "completed",
+  "created_at": "2026-02-08T20:12:43.978915",
+  "started_at": "2026-02-08T20:12:44.565931",
+  "completed_at": "2026-02-08T20:12:44.760240",
+  "input_params": {
+    "random_seed": 42,
+    "simulation": {
+      "event_count": 500,
+      "intruder_probability": 0.3
+    },
+    "topology": {
+      "outer_ring_nodes": 8,
+      "inner_ring_nodes": 8,
+      "sensor_range": 15,
+      "p2p_range": 30
+    },
+    "decision_logic": {
+      "confirm_threshold": 0.8,
+      "verify_threshold": 0.7,
+      "verification_timeout": 3
+    },
+    "image_model": {
+      "boar_confidence_mean": 0.85,
+      "noise_confidence_mean": 0.35
+    },
+    "communication": {
+      "loss_base": 0
+    },
+    "gateway": {
+      "up_duration_mean": 1800
+    }
+  },
+  "artifacts": {
+    "input.json": "/home/jaikrrishs/Desktop/Projects/Live-in-Labs/runs/33b7c60c-03aa-4dfc-802c-16a5ef690708/input.json",
+    "metrics.json": "/home/jaikrrishs/Desktop/Projects/Live-in-Labs/runs/33b7c60c-03aa-4dfc-802c-16a5ef690708/metrics.json",
+    "summary.json": "/home/jaikrrishs/Desktop/Projects/Live-in-Labs/runs/33b7c60c-03aa-4dfc-802c-16a5ef690708/summary.json",
+    "latency_cdf.png": "/home/jaikrrishs/Desktop/Projects/Live-in-Labs/runs/33b7c60c-03aa-4dfc-802c-16a5ef690708/latency_cdf.png",
+    "detection_comparison.png": "/home/jaikrrishs/Desktop/Projects/Live-in-Labs/runs/33b7c60c-03aa-4dfc-802c-16a5ef690708/detection_comparison.png"
+  },
+  "error_message": null
+}

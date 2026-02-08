@@ -1,0 +1,40 @@
+{
+  "run_id": "6284091a-fd64-46ec-b456-4dfb96a6f8f7",
+  "random_seed": 42,
+  "simulation": {
+    "event_count": 500,
+    "intruder_probability": 0.3,
+    "event_interval_mean": 8.0
+  },
+  "topology": {
+    "outer_ring_nodes": 8,
+    "inner_ring_nodes": 5,
+    "outer_ring_radius": 23.0,
+    "inner_ring_radius": 14.0,
+    "inner_ring_offset_deg": 22.5,
+    "sensor_range": 15.0,
+    "p2p_range": 30.0
+  },
+  "decision_logic": {
+    "confirm_threshold": 0.8,
+    "verify_threshold": 0.7,
+    "verification_timeout": 3.0
+  },
+  "image_model": {
+    "boar_confidence_mean": 0.85,
+    "boar_confidence_std": 0.08,
+    "noise_confidence_mean": 0.35,
+    "noise_confidence_std": 0.15
+  },
+  "communication": {
+    "loss_base": 0.0,
+    "loss_per_meter": 0.0025,
+    "delay_base": 0.1,
+    "delay_per_meter": 0.0001,
+    "delay_jitter": 0.05
+  },
+  "gateway": {
+    "up_duration_mean": 1800.0,
+    "down_duration_mean": 300.0
+  }
+}

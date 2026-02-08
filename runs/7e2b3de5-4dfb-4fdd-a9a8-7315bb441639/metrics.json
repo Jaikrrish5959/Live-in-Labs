@@ -1,0 +1,21 @@
+{
+  "run_id": "7e2b3de5-4dfb-4fdd-a9a8-7315bb441639",
+  "timestamp": "2026-02-08T20:13:30.807793",
+  "execution_time_seconds": 0.035417,
+  "total_events": 470,
+  "total_intruders": 128,
+  "total_noise": 342,
+  "total_detections": 521,
+  "unique_detections": 128,
+  "true_positives": 128,
+  "false_positives": 0,
+  "false_positive_rate": 0.0,
+  "detection_rate": 1.0,
+  "mean_latency_seconds": 0.0,
+  "max_latency_seconds": 0.0,
+  "p95_latency_seconds": 0.0,
+  "mean_p2p_messages": 0.0,
+  "total_p2p_messages": 0,
+  "detections_during_outage": 5,
+  "outage_detection_rate": 0.0391
+}
